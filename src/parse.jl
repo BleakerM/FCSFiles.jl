@@ -106,14 +106,15 @@ function parse_data(io,
         error("Only float and integer data types are implemented for now, the required .fcs file is using another number encoding.")
     end
 
-    flat_data = Array{dtype}(undef, (end_data - start_data + 1) ÷ 4)
-
+    
     # Use the regular io if float and allow any endian type.
     # If the io buffer is an integer array, read in the data in flat format and use ltoh ans this is what is defined by the system.
     if text_mappings["\$DATATYPE"] != "I"
+        flat_data = Array{dtype}(undef, (end_data - start_data + 1) ÷ 4)
         read!(io, flat_data)
         endian_func = get_endian_func(text_mappings)
     else
+        flat_data = Array{dtype}(undef, length(buf2))
         read!(io_buffer, flat_data)
         endian_func=ltoh # System defined 
     end
